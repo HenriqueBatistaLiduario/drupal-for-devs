@@ -1,0 +1,35 @@
+name: drupal-for-devs
+recipe: drupal9
+config:
+    webroot: web
+    php: '8.1'
+    composer_version: "2.5.8"
+proxy:
+    appserver:
+        - drupal-for-devs.lndo.site
+services:
+    appserver:
+        type: php:8.1
+        scanner: false
+        config:
+            php: /php.ini
+    database:
+        type: mysql:5.7
+        portforward: true
+        creds:
+            user: dev-sa
+            password: dev1234
+            database: dfdevs
+    pma:
+        type: phpmyadmin
+        hosts:
+            - database
+        overrides:
+            environment:
+                PMA_HOST: database
+                PMA_USER: root
+tooling:
+    drush:
+        service: appserver
+        description: Run Drush commands
+        cmd: drush --root=/app/web --uri=drupal-for-devs.lndo.site
